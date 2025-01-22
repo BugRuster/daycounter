@@ -8,27 +8,23 @@ import 'add_countdown_screen.dart';
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
-  void _deleteCountdown(BuildContext context, CountdownEvent countdown) {
-    final box = Hive.box<CountdownEvent>('countdowns');
-    countdown.delete();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('${countdown.title} deleted'),
-        action: SnackBarAction(
-          label: 'Undo',
-          onPressed: () {
-            box.add(countdown);
-          },
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFF000000),
       appBar: AppBar(
-        title: const Text('My Countdowns'),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text(
+          'TIMEVAULT',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 28,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 1.2,
+          ),
+        ),
+        centerTitle: true,
       ),
       body: ValueListenableBuilder(
         valueListenable: Hive.box<CountdownEvent>('countdowns').listenable(),
@@ -38,49 +34,49 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.timer_outlined,
-                    size: 64,
-                    color: Colors.blue.withOpacity(0.5),
-                  ),
-                  const SizedBox(height: 16),
                   Text(
                     'No countdowns yet',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Add your first countdown by tapping the + button',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey,
-                        ),
+                    style: TextStyle(
+                      color: Colors.white.withOpacity(0.6),
+                      fontSize: 18,
+                    ),
                   ),
                 ],
               ),
             );
           }
           return ListView.builder(
+            padding: const EdgeInsets.only(top: 8, bottom: 88),
             itemCount: box.length,
             itemBuilder: (context, index) {
               final countdown = box.getAt(index);
               return CountdownCard(
                 countdown: countdown!,
-                onDelete: (countdown) => _deleteCountdown(context, countdown),
+                onDelete: (countdown) {
+                  countdown.delete();
+                },
               );
             },
           );
         },
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => const AddCountdownScreen(),
-            ),
-          );
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        child: FloatingActionButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AddCountdownScreen(),
+              ),
+            );
+          },
+          backgroundColor: const Color(0xFF0A84FF),
+          child: const Icon(Icons.add, color: Colors.white),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+        ),
       ),
     );
   }
